@@ -1,0 +1,74 @@
+.dashboard{
+    margin:0;
+    background-image: url("https://i.pinimg.com/originals/39/96/13/3996133089029edfc380dc0cc77372df.gif");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100vw;
+    height: 100vh;
+    text-align: center;
+}
+.banner img{
+    width: 100vw;
+    height: 125px;
+}
+.dashbox{
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background: linear-gradient(to left, #fec4e1,#fff);
+    padding: 60px;
+}
+.dashbox button{
+    width: 145px;
+    margin-bottom: 10px;
+    transition: background 0.3s , transform 0.3s , box-shadow 0.3s;
+    cursor: pointer;
+}
+.dashbox button:hover{
+    transform: scale(1.08);
+    box-shadow: 0 2px 5px;
+}
+#create:hover{
+    background-color: rgb(69, 225, 52);
+}
+#load:hover{
+    background-color: skyblue;
+}
+#log:hover{
+    background-color: rgb(255, 85, 85);
+}
+#save:hover{
+    background-color:aquamarine ;
+}
+.dashfooter{
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: fit-content;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 20px;
+    padding: 22px 48px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.45);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    font-weight: bold;
+    text-decoration: underline;
+    color: #222;
+    box-shadow: 0 2px 12px #00ffe5;
+}
+.retractable {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.4s ease;
+}
+
+.retractable.show {
+    max-height: 300px; /* adjust depending on content */
+    opacity: 1;
+}

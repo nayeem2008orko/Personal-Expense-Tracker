@@ -1,0 +1,9 @@
+body{
+  margin:0;
+}
+.message {
+  margin-top: 10px;
+  color: red; /* red for errors */
+  font-weight: bold;
+  text-align: center;
+}
