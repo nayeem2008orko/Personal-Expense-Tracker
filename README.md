@@ -37,7 +37,7 @@ npm install
 ```
 3. Create a .env file in the backend folder with:
 ```ini
-PORT=5000
+PORT=your_port_where_the_sql_server_is_active_usually_5000_3306
 DB_HOST=your_db_host
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
