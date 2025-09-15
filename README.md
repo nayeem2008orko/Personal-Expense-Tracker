@@ -136,3 +136,7 @@ Include package.json, package-lock.json, and vite.config.js in the repo.
   ```bash
   npm install react react-dom
   ```
+- Markdown & Remarks (text-generation for AI model)
+  ```bash
+  npm install react-markdown remark-gfm
+  ```
