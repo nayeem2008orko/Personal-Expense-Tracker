@@ -131,6 +131,10 @@ Include package.json, package-lock.json, and vite.config.js in the repo.
   ```bash
   npm install jsonwebtoken
   ```
+- nodemon
+  ```bash
+  npm install nodemon --save-dev
+  ```
 ### Frontend
 - React + React DOM (Core)
   ```bash
