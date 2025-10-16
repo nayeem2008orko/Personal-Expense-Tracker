@@ -13,7 +13,7 @@ router.post("/chat", async (req, res) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "deepseek/deepseek-chat-v3.1:free",
+        model: "meituan/longcat-flash-chat:free",
         messages: [{ role: "user", content: message }],
       }),
     });

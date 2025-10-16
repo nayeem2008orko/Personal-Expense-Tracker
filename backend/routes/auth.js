@@ -5,11 +5,28 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+// Helper function to calculate age
+function calculateAge(dob) {
+  const birthDate = new Date(dob);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
 // Signup
 router.post("/signup", async (req, res) => {
   const { fullName, dob, username, password } = req.body;
   if (!fullName || !dob || !username || !password) {
     return res.status(400).json({ message: "All fields are required" });
+  }
+
+  const age = calculateAge(dob);
+  if (age < 18 || age > 70) {
+    return res.status(400).json({ message: "You are either too old or too young" });
   }
 
   try {
@@ -18,10 +35,10 @@ router.post("/signup", async (req, res) => {
     db.query(
       "INSERT INTO users (full_name, date_of_birth, username, password) VALUES (?, ?, ?, ?)",
       [fullName, dob, username, hashedPassword],
-      (err, result) => {
+      (err) => {
         if (err) {
           console.error(err);
-          return res.status(400).json({ message: "Username already exists or database error" });
+          return res.status(400).json({ message: "Username already exists" });
         }
         res.status(201).json({ message: "User created successfully" });
       }

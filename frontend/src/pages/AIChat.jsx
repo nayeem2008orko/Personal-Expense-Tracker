@@ -7,19 +7,21 @@ export default function AIChat() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false); // loading state
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(scrollToBottom, [messages]);
+  useEffect(scrollToBottom, [messages, loading]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
     const userMessage = { sender: "user", text: input };
     setMessages([...messages, userMessage]);
     setInput("");
+    setLoading(true); // start loading
 
     try {
       const res = await fetch("http://localhost:5000/api/ai/chat", {
@@ -33,6 +35,8 @@ export default function AIChat() {
     } catch (err) {
       const errorMessage = { sender: "ai", text: "AI service unavailable." };
       setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setLoading(false); // stop loading
     }
   };
 
@@ -62,6 +66,17 @@ export default function AIChat() {
               )}
             </div>
           ))}
+
+          {loading && (
+            <div className="ai-message ai">
+              <span className="dot-loading">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </div>
+          )}
+
           <div ref={messagesEndRef} />
         </div>
         <div className="ai-input">
