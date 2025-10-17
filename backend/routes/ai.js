@@ -13,7 +13,7 @@ router.post("/chat", async (req, res) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "meituan/longcat-flash-chat:free",
+        model: "alibaba/tongyi-deepresearch-30b-a3b:free",
         messages: [{ role: "user", content: message }],
       }),
     });
