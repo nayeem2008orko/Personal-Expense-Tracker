@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function Signup() {
   const [fullName, setFullName] = useState("");
@@ -6,6 +6,22 @@ export default function Signup() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(""); // for error/success messages
+  const [numLockOn, setNumLockOn] = useState(true);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (
+        e.code.startsWith("Numpad") &&
+        !e.getModifierState("NumLock")
+      ) {
+        setNumLockOn(false);
+      } else {
+        setNumLockOn(true);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -63,6 +79,11 @@ export default function Signup() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        {!numLockOn && (
+          <p style={{ color: "red" }}>
+            Num Lock is off! Numpad keys won’t work correctly.
+          </p>
+        )}
         <p>
           Already have an account? <a href="/login">Log in</a>
         </p>
