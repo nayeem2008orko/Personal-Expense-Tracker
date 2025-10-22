@@ -102,6 +102,7 @@ export default function Tracker() {
 
       {/* Main content */}
       <div className="main-content">
+        <title>Tracker Window</title>
         <div className="table-container">
           <h2>Entries</h2>
           <table>

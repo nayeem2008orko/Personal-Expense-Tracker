@@ -76,6 +76,7 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
+      <title>Dashboard</title>
       <div className="banner">
         <img src="https://i.pinimg.com/originals/f7/70/52/f77052ece2019de9570ef039f6b14a49.gif" alt="banner" />
       </div>
