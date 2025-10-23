@@ -73,10 +73,32 @@ router.post("/login", (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: true,
+        sameSite: "lax",
+        secure: false,
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .json({ message: "Login successful" });
   });
 });
+// Token validation route
+router.get("/check", (req, res) => {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ authenticated: false });
 
+  try {
+    jwt.verify(token, process.env.JWT_SECRET);
+    res.json({ authenticated: true });
+  } catch {
+    res.status(401).json({ authenticated: false });
+  }
+});
+// Logout
+router.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: false, // change to true when using HTTPS (like Render or Docker with SSL)
+  });
+  res.json({ message: "Logged out successfully" });
+});
 module.exports = router;

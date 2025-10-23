@@ -69,10 +69,17 @@ export default function Dashboard() {
     navigate(`/tracker/${trackerId}`);
   };
 
-  const handleLogout = () => {
-    document.cookie = "token=; Max-Age=0; path=/;";
+const handleLogout = async () => {
+  try {
+    await fetch(`http://localhost:5000/api/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
     window.location.href = "/login";
-  };
+  } catch (err) {
+    console.error("Logout failed:", err);
+  }
+};
 
   return (
     <div className="dashboard">

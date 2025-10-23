@@ -2,20 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import AIChat from "./AIChat";
+
 export default function Tracker() {
   const { trackerId } = useParams();
   const [entries, setEntries] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showIncome, setShowIncome] = useState(false);
   const [showExpense, setShowExpense] = useState(false);
-
   const [incomeAmount, setIncomeAmount] = useState("");
   const [incomeDesc, setIncomeDesc] = useState("");
   const [incomeDate, setIncomeDate] = useState("");
-
   const [expenseAmount, setExpenseAmount] = useState("");
   const [expenseDesc, setExpenseDesc] = useState("");
   const [expenseDate, setExpenseDate] = useState("");
+  const [invalidTracker, setInvalidTracker] = useState(false); // NEW: flag for unauthorized tracker
 
   // Fetch entries
   const fetchEntries = async () => {
@@ -23,6 +23,10 @@ export default function Tracker() {
       const res = await fetch(`http://localhost:5000/api/tracker/entries/${trackerId}`, {
         credentials: "include",
       });
+      if (res.status === 404) {
+        setInvalidTracker(true);
+        return;
+      }
       if (res.ok) {
         const data = await res.json();
         setEntries(data);
@@ -32,7 +36,7 @@ export default function Tracker() {
     }
   };
 
-  useEffect(() => { fetchEntries(); }, []);
+  useEffect(() => { fetchEntries(); }, [trackerId]);
 
   // Add entry
   const addEntry = async (type, desc, amount, date) => {
@@ -68,6 +72,26 @@ export default function Tracker() {
     return acc;
   }, {});
   const chartArray = Object.values(chartData);
+
+  // NEW: Show full-screen message if tracker is invalid
+  if (invalidTracker) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          backgroundColor: "white",
+          fontSize: "2rem",
+          fontWeight: "bold",
+          color: "black",
+        }}
+      >
+        Nice Try Diddy, make your own data
+      </div>
+    );
+  }
 
   return (
     <div className="tracker-page">
