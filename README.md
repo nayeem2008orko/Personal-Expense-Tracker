@@ -13,7 +13,7 @@ A web-based personal expense tracker with an integrated AI assistant. Track your
 ## Tech Stack
 
 - **Frontend:** React+Vite, CSS  
-- **Backend:** Node.js+Express, MySQL  
+- **Backend:** Node.js+Express, PostgreSQL  
 - **AI Integration:** OpenRouter API (Varies time to time)  
 
 ## Installation
