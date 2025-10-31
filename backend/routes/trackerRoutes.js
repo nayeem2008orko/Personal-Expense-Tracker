@@ -3,7 +3,6 @@ const router = express.Router();
 const db = require("../db");
 const authMiddleware = require("../middleware/authMiddleware");
 
-// All routes require login
 router.use(authMiddleware);
 
 // Create tracker
@@ -12,123 +11,122 @@ router.post("/create", async (req, res) => {
   const userId = req.user.id;
   if (!name) return res.status(400).json({ message: "Name is required" });
 
-  db.query(
-    "INSERT INTO trackers (user_id, name) VALUES (?, ?)",
-    [userId, name],
-    (err, result) => {
-      if (err) return res.status(500).json({ message: "Database error" });
-      res.status(201).json({ message: "Tracker created", id: result.insertId });
-    }
-  );
+  try {
+    const result = await db.query(
+      "INSERT INTO trackers (user_id, name, created_at) VALUES ($1, $2, NOW()) RETURNING id",
+      [userId, name]
+    );
+    res.status(201).json({ message: "Tracker created", id: result.rows[0].id });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Database error" });
+  }
 });
 
-// List trackers for current user
-router.get("/list", (req, res) => {
+// List trackers
+router.get("/list", async (req, res) => {
   const userId = req.user.id;
-  db.query(
-    "SELECT * FROM trackers WHERE user_id = ?",
-    [userId],
-    (err, results) => {
-      if (err) return res.status(500).json({ message: "Database error" });
-      res.json(results);
-    }
-  );
+  try {
+    const result = await db.query(
+      "SELECT * FROM trackers WHERE user_id = $1 ORDER BY created_at DESC",
+      [userId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Database error" });
+  }
 });
 
-// Delete tracker (only owner)
-router.delete("/delete/:id", (req, res) => {
+// Delete tracker
+router.delete("/delete/:id", async (req, res) => {
   const trackerId = req.params.id;
   const userId = req.user.id;
-
-  db.query(
-    "DELETE FROM trackers WHERE id = ? AND user_id = ?",
-    [trackerId, userId],
-    (err, result) => {
-      if (err) return res.status(500).json({ message: "Database error" });
-      if (result.affectedRows === 0)
-        return res.status(404).json({ message: "Tracker not found or not yours" });
-      res.json({ message: "Tracker deleted" });
-    }
-  );
+  try {
+    const result = await db.query(
+      "DELETE FROM trackers WHERE id = $1 AND user_id = $2 RETURNING id",
+      [trackerId, userId]
+    );
+    if (result.rows.length === 0)
+      return res.status(404).json({ message: "Tracker not found or not yours" });
+    res.json({ message: "Tracker deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Database error" });
+  }
 });
 
-// Add entry (income/expense) (only owner)
-router.post("/entry", (req, res) => {
+// Add entry
+router.post("/entry", async (req, res) => {
   const { trackerId, entryType, description, amount, entryDate } = req.body;
   const userId = req.user.id;
 
   if (!trackerId || !entryType || !amount || !entryDate)
     return res.status(400).json({ message: "Missing required fields" });
 
-  // Check if tracker belongs to user
-  db.query(
-    "SELECT * FROM trackers WHERE id = ? AND user_id = ?",
-    [trackerId, userId],
-    (err, results) => {
-      if (err) return res.status(500).json({ message: "Database error" });
-      if (results.length === 0)
-        return res.status(404).json({ message: "Tracker not found or not yours" });
+  try {
+    // Ensure tracker belongs to user
+    const tracker = await db.query(
+      "SELECT * FROM trackers WHERE id = $1 AND user_id = $2",
+      [trackerId, userId]
+    );
+    if (tracker.rows.length === 0)
+      return res.status(404).json({ message: "Tracker not found or not yours" });
 
-      // Insert entry
-      db.query(
-        "INSERT INTO tracker_entries (tracker_id, entry_type, description, amount, entry_date) VALUES (?, ?, ?, ?, ?)",
-        [trackerId, entryType, description || "", amount, entryDate],
-        (err) => {
-          if (err) return res.status(500).json({ message: "Database error" });
-          res.json({ message: "Entry added" });
-        }
-      );
-    }
-  );
+    await db.query(
+      "INSERT INTO tracker_entries (tracker_id, entry_type, description, amount, entry_date) VALUES ($1, $2, $3, $4, $5)",
+      [trackerId, entryType, description || "", amount, entryDate]
+    );
+    res.json({ message: "Entry added" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Database error" });
+  }
 });
 
-// Get entries for tracker (only owner)
-router.get("/entries/:trackerId", (req, res) => {
+// Get entries for tracker
+router.get("/entries/:trackerId", async (req, res) => {
   const trackerId = req.params.trackerId;
   const userId = req.user.id;
 
-  // Check ownership
-  db.query(
-    "SELECT * FROM trackers WHERE id = ? AND user_id = ?",
-    [trackerId, userId],
-    (err, results) => {
-      if (err) return res.status(500).json({ message: "Database error" });
-      if (results.length === 0)
-        return res.status(404).json({ message: "Tracker not found or not yours" });
+  try {
+    const tracker = await db.query(
+      "SELECT * FROM trackers WHERE id = $1 AND user_id = $2",
+      [trackerId, userId]
+    );
+    if (tracker.rows.length === 0)
+      return res.status(404).json({ message: "Tracker not found or not yours" });
 
-      // Fetch entries
-      db.query(
-        "SELECT * FROM tracker_entries WHERE tracker_id = ? ORDER BY entry_date ASC",
-        [trackerId],
-        (err, entries) => {
-          if (err) return res.status(500).json({ message: "Database error" });
-          res.json(entries);
-        }
-      );
-    }
-  );
+    const entries = await db.query(
+      "SELECT * FROM tracker_entries WHERE tracker_id = $1 ORDER BY entry_date ASC",
+      [trackerId]
+    );
+    res.json(entries.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Database error" });
+  }
 });
 
-// Delete entry (only owner)
-router.delete("/entry/:id", (req, res) => {
+// Delete entry
+router.delete("/entry/:id", async (req, res) => {
   const entryId = req.params.id;
   const userId = req.user.id;
 
-  // Make sure entry belongs to user's tracker
-  db.query(
-    "SELECT t.id FROM tracker_entries e JOIN trackers t ON e.tracker_id = t.id WHERE e.id = ? AND t.user_id = ?",
-    [entryId, userId],
-    (err, results) => {
-      if (err) return res.status(500).json({ message: "Database error" });
-      if (results.length === 0)
-        return res.status(404).json({ message: "Entry not found or not yours" });
+  try {
+    const check = await db.query(
+      "SELECT t.id FROM tracker_entries e JOIN trackers t ON e.tracker_id = t.id WHERE e.id = $1 AND t.user_id = $2",
+      [entryId, userId]
+    );
+    if (check.rows.length === 0)
+      return res.status(404).json({ message: "Entry not found or not yours" });
 
-      db.query("DELETE FROM tracker_entries WHERE id = ?", [entryId], (err) => {
-        if (err) return res.status(500).json({ message: "Database error" });
-        res.json({ message: "Entry deleted" });
-      });
-    }
-  );
+    await db.query("DELETE FROM tracker_entries WHERE id = $1", [entryId]);
+    res.json({ message: "Entry deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Database error" });
+  }
 });
 
 module.exports = router;
