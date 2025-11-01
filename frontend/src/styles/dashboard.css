@@ -1,5 +1,6 @@
 .dashboard{
     margin:0;
+    padding: 0;
     background-image: url("https://i.pinimg.com/originals/39/96/13/3996133089029edfc380dc0cc77372df.gif");
     background-position: center;
     background-repeat: no-repeat;
@@ -7,16 +8,24 @@
     width: 100vw;
     height: 100vh;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
-.banner img{
-    width: 100vw;
-    height: 125px;
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.title{
+    text-align: center;
+    position: relative;
+    top: 10%;
 }
 .dashbox{
-    position:absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
+    width: fit-content;
+    height: fit-content;
     background: linear-gradient(to left, #fec4e1,#fff);
     padding: 60px;
 }
@@ -43,11 +52,8 @@
     background-color:aquamarine ;
 }
 .dashfooter{
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
     width: fit-content;
+    margin: auto;
     text-align: center;
     background: rgba(255, 255, 255, 0.45);
     border-radius: 20px;

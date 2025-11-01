@@ -50,10 +50,13 @@ export default function Dashboard() {
 
   const handleDelete = async (trackerId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/tracker/delete/${trackerId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+      const res = await fetch(
+        `http://localhost:5000/api/tracker/delete/${trackerId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
       if (res.ok) {
         fetchTrackers();
       } else {
@@ -69,62 +72,74 @@ export default function Dashboard() {
     navigate(`/tracker/${trackerId}`);
   };
 
-const handleLogout = async () => {
-  try {
-    await fetch(`http://localhost:5000/api/auth/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
-    window.location.href = "/login";
-  } catch (err) {
-    console.error("Logout failed:", err);
-  }
-};
+  const handleLogout = async () => {
+    try {
+      await fetch(`http://localhost:5000/api/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      window.location.href = "/login";
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
 
   return (
     <div className="dashboard">
       <title>Dashboard</title>
-      <div className="banner">
-        <img src="https://i.pinimg.com/originals/f7/70/52/f77052ece2019de9570ef039f6b14a49.gif" alt="banner" />
+      <div className="title">
+        <h1>WELCOME TO EXPENSE MASTERS</h1>
+        <h2>Dashboard</h2>
       </div>
-      <h1>WELCOME TO EXPENSE MASTERS</h1>
-      <h3>Dashboard</h3>
+      <div className="container">
+        <div className="dashbox">
+          <button id="create" onClick={() => setShowCreate(!showCreate)}>
+            Create a new Expense tracker
+          </button>
+          <div className={`retractable ${showCreate ? "show" : ""}`}>
+            <input
+              type="text"
+              placeholder="Enter tracker name"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+            />
+            <button onClick={handleCreate}>Save</button>
+            {message && <p>{message}</p>}
+          </div>
 
-      <div className="dashbox">
-        <button id="create" onClick={() => setShowCreate(!showCreate)}>Create a new Expense tracker</button>
-        <div className={`retractable ${showCreate ? "show" : ""}`}>
-          <input
-            type="text"
-            placeholder="Enter tracker name"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-          />
-          <button onClick={handleCreate}>Save</button>
-          {message && <p>{message}</p>}
+          <button id="load" onClick={() => setShowLoad(!showLoad)}>
+            Load an Existing one
+          </button>
+          <div className={`retractable ${showLoad ? "show" : ""}`}>
+            {trackers.length > 0 ? (
+              trackers.map((t) => (
+                <div key={t.id} className="tracker-item">
+                  <span>{t.name}</span>
+                  <button onClick={() => handleOpen(t.id)}>Open</button>
+                  <button onClick={() => handleDelete(t.id)}>Delete</button>
+                </div>
+              ))
+            ) : (
+              <p>No trackers found</p>
+            )}
+          </div>
+
+          <button id="log" onClick={handleLogout}>
+            Log out
+          </button>
         </div>
-
-        <button id="load" onClick={() => setShowLoad(!showLoad)}>Load an Existing one</button>
-        <div className={`retractable ${showLoad ? "show" : ""}`}>
-          {trackers.length > 0 ? (
-            trackers.map((t) => (
-              <div key={t.id} className="tracker-item">
-                <span>{t.name}</span>
-                <button onClick={() => handleOpen(t.id)}>Open</button>
-                <button onClick={() => handleDelete(t.id)}>Delete</button>
-              </div>
-            ))
-          ) : (
-            <p>No trackers found</p>
-          )}
-        </div>
-
-        <button id="log" onClick={handleLogout}>Log out</button>
       </div>
-
       <footer className="dashfooter">
         <address>
           Created and developed by Nayeem Ahmed <br />
-          Github profile: <a href="https://github.com/nayeem2008orko" target="_blank" rel="noreferrer">nayeem2008orko</a>
+          Github profile:{" "}
+          <a
+            href="https://github.com/nayeem2008orko"
+            target="_blank"
+            rel="noreferrer"
+          >
+            nayeem2008orko
+          </a>
         </address>
       </footer>
     </div>

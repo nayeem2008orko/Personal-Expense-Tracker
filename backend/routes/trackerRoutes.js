@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 const authMiddleware = require("../middleware/authMiddleware");
+const { encryptId, decryptId } = require("../utils/encryption"); // your existing encryption.js
 
 router.use(authMiddleware);
 
@@ -16,7 +17,10 @@ router.post("/create", async (req, res) => {
       "INSERT INTO trackers (user_id, name, created_at) VALUES ($1, $2, NOW()) RETURNING id",
       [userId, name]
     );
-    res.status(201).json({ message: "Tracker created", id: result.rows[0].id });
+
+    // Encrypt the ID for frontend
+    const encryptedId = encryptId(result.rows[0].id);
+    res.status(201).json({ message: "Tracker created", id: encryptedId });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Database error" });
@@ -31,7 +35,14 @@ router.get("/list", async (req, res) => {
       "SELECT * FROM trackers WHERE user_id = $1 ORDER BY created_at DESC",
       [userId]
     );
-    res.json(result.rows);
+
+    // Encrypt all IDs before sending to frontend
+    const trackers = result.rows.map((t) => ({
+      ...t,
+      id: encryptId(t.id),
+    }));
+
+    res.json(trackers);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Database error" });
@@ -39,16 +50,25 @@ router.get("/list", async (req, res) => {
 });
 
 // Delete tracker
-router.delete("/delete/:id", async (req, res) => {
-  const trackerId = req.params.id;
+router.delete("/delete/:encryptedId", async (req, res) => {
   const userId = req.user.id;
+  let trackerId;
+
+  try {
+    trackerId = decryptId(req.params.encryptedId); // decrypt incoming ID
+  } catch {
+    return res.status(400).json({ message: "Invalid tracker ID" });
+  }
+
   try {
     const result = await db.query(
       "DELETE FROM trackers WHERE id = $1 AND user_id = $2 RETURNING id",
       [trackerId, userId]
     );
+
     if (result.rows.length === 0)
       return res.status(404).json({ message: "Tracker not found or not yours" });
+
     res.json({ message: "Tracker deleted" });
   } catch (err) {
     console.error(err);
@@ -58,14 +78,20 @@ router.delete("/delete/:id", async (req, res) => {
 
 // Add entry
 router.post("/entry", async (req, res) => {
-  const { trackerId, entryType, description, amount, entryDate } = req.body;
+  const { trackerId: encTrackerId, entryType, description, amount, entryDate } = req.body;
   const userId = req.user.id;
 
-  if (!trackerId || !entryType || !amount || !entryDate)
+  if (!encTrackerId || !entryType || !amount || !entryDate)
     return res.status(400).json({ message: "Missing required fields" });
 
+  let trackerId;
   try {
-    // Ensure tracker belongs to user
+    trackerId = decryptId(encTrackerId); // decrypt tracker ID
+  } catch {
+    return res.status(400).json({ message: "Invalid tracker ID" });
+  }
+
+  try {
     const tracker = await db.query(
       "SELECT * FROM trackers WHERE id = $1 AND user_id = $2",
       [trackerId, userId]
@@ -85,9 +111,15 @@ router.post("/entry", async (req, res) => {
 });
 
 // Get entries for tracker
-router.get("/entries/:trackerId", async (req, res) => {
-  const trackerId = req.params.trackerId;
+router.get("/entries/:encryptedId", async (req, res) => {
   const userId = req.user.id;
+  let trackerId;
+
+  try {
+    trackerId = decryptId(req.params.encryptedId); // decrypt tracker ID
+  } catch {
+    return res.status(400).json({ message: "Invalid tracker ID" });
+  }
 
   try {
     const tracker = await db.query(
@@ -101,6 +133,7 @@ router.get("/entries/:trackerId", async (req, res) => {
       "SELECT * FROM tracker_entries WHERE tracker_id = $1 ORDER BY entry_date ASC",
       [trackerId]
     );
+
     res.json(entries.rows);
   } catch (err) {
     console.error(err);
