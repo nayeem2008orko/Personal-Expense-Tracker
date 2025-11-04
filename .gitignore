@@ -3,3 +3,7 @@ node_modules/
 
 # Environment files
 .env
+#Docker files
+Dockerfile
+docker-compose.yml
+nginx/

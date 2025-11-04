@@ -18,7 +18,7 @@ export default function Tracker() {
 
   const fetchEntries = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/tracker/entries/${trackerId}`, {
+      const res = await fetch(`/api/tracker/entries/${trackerId}`, {
         credentials: "include",
       });
       if (res.status === 404) {
@@ -39,7 +39,7 @@ export default function Tracker() {
   const addEntry = async (type, desc, amount, date) => {
     if (!amount || !date) return;
     try {
-      const res = await fetch("http://localhost:5000/api/tracker/entry", {
+      const res = await fetch("/api/tracker/entry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -51,7 +51,7 @@ export default function Tracker() {
 
   const deleteEntry = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/tracker/entry/${id}`, {
+      const res = await fetch(`/api/tracker/entry/${id}`, {
         method: "DELETE",
         credentials: "include",
       });

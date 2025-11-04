@@ -31,7 +31,7 @@ export default function Dashboard() {
   const handleCreate = async () => {
     if (!newName) return setMessage("Please enter a name");
     try {
-      const res = await fetch("http://localhost:5000/api/tracker/create", {
+      const res = await fetch("/api/tracker/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
