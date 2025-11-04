@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 
-const SECRET_KEY = process.env.ID_SECRET_KEY || "super_secret_key"; // any length
+const SECRET_KEY = process.env.ID_SECRET_KEY; // any length
 const ALGORITHM = "aes-256-ctr";
 const IV_LENGTH = 16; // initialization vector length
 
