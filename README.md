@@ -37,7 +37,7 @@ npm install
 ```
 3. Create a .env file in the backend folder with:
 ```ini
-PORT=your_port_where_the_sql_server_is_active_usually_5000_3306
+PORT= your_backend_port
 DB_HOST=your_db_host
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
@@ -64,15 +64,32 @@ npm run dev
 ```pgsql
 personal-expense/
 ├─ backend/
+|  ├─ middleware/
+|  |  ├─ authMiddleware.js
 │  ├─ routes/
 │  │  ├─ ai.js
 │  │  ├─ auth.js
+|  |  ├─ tracker.js
 │  │  ├─ trackerRoutes.js
 │  ├─ server.js
 │  ├─ package.json
 │  ├─ .env
 ├─ frontend/
 │  ├─ src/
+|  |  ├─ components/
+|  |  |  ├─ ProtectedRoute.jsx
+|  |  ├─ pages/
+|  |  |  ├─ AIChat.jsx
+|  |  |  ├─ Dashboard.jsx
+|  |  |  ├─ Login.jsx
+|  |  |  ├─ Signup.jsx
+|  |  |  ├─ Tracker.jsx
+|  |  ├─ styles/
+|  |  |  ├─ AIchat.css
+|  |  |  ├─ dashboard.css
+|  |  |  ├─ login.css
+|  |  |  ├─ signup.css
+|  |  |  ├─ tracker.csss
 │  │  ├─ App.jsx
 │  │  ├─ AIChat.jsx
 │  │  ├─ index.css
