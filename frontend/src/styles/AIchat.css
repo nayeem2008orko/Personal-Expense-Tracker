@@ -33,9 +33,7 @@
   transition: right 0.4s ease;
   z-index: 999;
 }
-.ai-sidebar.open {
-  right: 0;
-}
+.ai-sidebar.open { right: 0; }
 
 /* Header */
 .ai-header {
@@ -100,9 +98,8 @@
   color: white;
   cursor: pointer;
 }
-.ai-input button:hover {
-  background-color: #357ABD;
-}
+.ai-input button:hover { background-color: #357ABD; }
+
 .dot-loading {
   display: flex;
   gap: 4px;
@@ -122,4 +119,13 @@
 @keyframes bounce {
   0%, 80%, 100% { transform: scale(0); }
   40% { transform: scale(1); }
+}
+
+/* Responsive for AIChat */
+@media (max-width: 768px) {
+  .ai-sidebar { width: 300px; }
+}
+@media (max-width: 480px) {
+  .ai-sidebar { width: 100%; }
+  .ai-toggle { width: 50px; height: 50px; font-size: 24px; }
 }

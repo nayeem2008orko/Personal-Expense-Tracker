@@ -6,7 +6,6 @@ import AIChat from "./AIChat";
 export default function Tracker() {
   const { trackerId } = useParams();
   const [entries, setEntries] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showIncome, setShowIncome] = useState(false);
   const [showExpense, setShowExpense] = useState(false);
   const [incomeAmount, setIncomeAmount] = useState("");
@@ -15,9 +14,8 @@ export default function Tracker() {
   const [expenseAmount, setExpenseAmount] = useState("");
   const [expenseDesc, setExpenseDesc] = useState("");
   const [expenseDate, setExpenseDate] = useState("");
-  const [invalidTracker, setInvalidTracker] = useState(false); // NEW: flag for unauthorized tracker
+  const [invalidTracker, setInvalidTracker] = useState(false);
 
-  // Fetch entries
   const fetchEntries = async () => {
     try {
       const res = await fetch(`http://localhost:5000/api/tracker/entries/${trackerId}`, {
@@ -38,7 +36,6 @@ export default function Tracker() {
 
   useEffect(() => { fetchEntries(); }, [trackerId]);
 
-  // Add entry
   const addEntry = async (type, desc, amount, date) => {
     if (!amount || !date) return;
     try {
@@ -52,7 +49,6 @@ export default function Tracker() {
     } catch (err) { console.error(err); }
   };
 
-  // Delete entry
   const deleteEntry = async (id) => {
     try {
       const res = await fetch(`http://localhost:5000/api/tracker/entry/${id}`, {
@@ -63,7 +59,6 @@ export default function Tracker() {
     } catch (err) { console.error(err); }
   };
 
-  // Chart data
   const chartData = entries.reduce((acc, e) => {
     const dateStr = e.entry_date;
     if (!acc[dateStr]) acc[dateStr] = { date: dateStr, income: 0, expense: 0 };
@@ -73,7 +68,6 @@ export default function Tracker() {
   }, {});
   const chartArray = Object.values(chartData);
 
-  // NEW: Show full-screen message if tracker is invalid
   if (invalidTracker) {
     return (
       <div
@@ -95,32 +89,27 @@ export default function Tracker() {
 
   return (
     <div className="tracker-page">
-      {/* Sidebar */}
-      <div className={`sidebar ${sidebarOpen ? "open" : "closed"}`}>
-        <button className="toggle-sidebar" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          {sidebarOpen ? "←" : "→"}
-        </button>
+      {/* Taskbar */}
+      <div className="taskbar">
+        <div className="taskbar-buttons">
+          <button className="task-btn" onClick={() => setShowIncome(!showIncome)}>Add Income</button>
+          <button className="task-btn" onClick={() => setShowExpense(!showExpense)}>Add Expense</button>
+        </div>
 
-        <div className={`sidebar-content ${sidebarOpen ? "show" : ""}`}>
-          <h3>Tracker Actions</h3>
+        {/* Income Drawer */}
+        <div className={`drawer ${showIncome ? "open" : ""}`}>
+          <input placeholder="Description" value={incomeDesc} onChange={(e) => setIncomeDesc(e.target.value)} />
+          <input type="number" placeholder="Amount" value={incomeAmount} onChange={(e) => setIncomeAmount(e.target.value)} />
+          <input type="date" value={incomeDate} onChange={(e) => setIncomeDate(e.target.value)} />
+          <button onClick={() => { addEntry("income", incomeDesc, incomeAmount, incomeDate); setIncomeDesc(""); setIncomeAmount(""); setIncomeDate(""); }}>Save Income</button>
+        </div>
 
-          {/* Income */}
-          <button className="retract-btn" onClick={() => setShowIncome(!showIncome)}>Add Income</button>
-          <div className={`retractable ${showIncome ? "show" : ""}`}>
-            <input placeholder="Description" value={incomeDesc} onChange={(e) => setIncomeDesc(e.target.value)} />
-            <input type="number" placeholder="Amount" value={incomeAmount} onChange={(e) => setIncomeAmount(e.target.value)} />
-            <input type="date" value={incomeDate} onChange={(e) => setIncomeDate(e.target.value)} />
-            <button onClick={() => { addEntry("income", incomeDesc, incomeAmount, incomeDate); setIncomeDesc(""); setIncomeAmount(""); setIncomeDate(""); }}>Save Income</button>
-          </div>
-
-          {/* Expense */}
-          <button className="retract-btn" onClick={() => setShowExpense(!showExpense)}>Add Expense</button>
-          <div className={`retractable ${showExpense ? "show" : ""}`}>
-            <input placeholder="Description" value={expenseDesc} onChange={(e) => setExpenseDesc(e.target.value)} />
-            <input type="number" placeholder="Amount" value={expenseAmount} onChange={(e) => setExpenseAmount(e.target.value)} />
-            <input type="date" value={expenseDate} onChange={(e) => setExpenseDate(e.target.value)} />
-            <button onClick={() => { addEntry("expense", expenseDesc, expenseAmount, expenseDate); setExpenseDesc(""); setExpenseAmount(""); setExpenseDate(""); }}>Save Expense</button>
-          </div>
+        {/* Expense Drawer */}
+        <div className={`drawer ${showExpense ? "open" : ""}`}>
+          <input placeholder="Description" value={expenseDesc} onChange={(e) => setExpenseDesc(e.target.value)} />
+          <input type="number" placeholder="Amount" value={expenseAmount} onChange={(e) => setExpenseAmount(e.target.value)} />
+          <input type="date" value={expenseDate} onChange={(e) => setExpenseDate(e.target.value)} />
+          <button onClick={() => { addEntry("expense", expenseDesc, expenseAmount, expenseDate); setExpenseDesc(""); setExpenseAmount(""); setExpenseDate(""); }}>Save Expense</button>
         </div>
       </div>
 

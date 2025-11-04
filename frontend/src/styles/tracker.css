@@ -1,58 +1,87 @@
 .tracker-page { 
   display: flex; 
-  height: 100vh; 
+  flex-direction: column; 
   font-family: sans-serif;
-  background: linear-gradient(to right,#ffff,#bffdfb)
+  background-image: url("https://i.pinimg.com/originals/55/e8/af/55e8af23ff4e1055efd3605624dceb66.gif");
+  min-height: 100vh;
+  min-width: 100vw;
+  background-position: center;
+
 }
 
-.sidebar {
-  width: 250px;
-  background: radial-gradient(circle,#e0f85a,#a0e870);
-  padding: 20px;
-  transition: transform 0.3s ease;
-  position: relative;
-  z-index: 10;
-}
-.sidebar.closed { transform: translateX(-250px); }
-
-.toggle-sidebar {
-  position: absolute;
-  right: -25px;
-  top: 20px;
-  cursor: pointer;
-  padding: 5px 10px;
-}
-
-.sidebar-content { opacity: 1; transition: opacity 0.3s ease; }
-.sidebar-content.show { opacity: 1; }
-
-.retract-btn {
+/* Taskbar */
+.taskbar {
+  height: fit-content;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  margin-bottom: 10px;
+  z-index: 100;
+  background: linear-gradient(90deg, #a1c4fd, #c2e9fb); /* northern light gradient */
+  backdrop-filter: blur(15px); /* frosted glass */
+  -webkit-backdrop-filter: blur(15px);
+  /*padding: 5px 20px;*/
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: top 0.3s ease;
+}
+
+/* Buttons inside taskbar */
+.taskbar-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: fit-content;
+}
+.task-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  color: #222;
   cursor: pointer;
-  padding: 8px;
-  background: #ddd;
-  border: solid;
+  font-weight: bold;
   transition: background 0.3s;
 }
-.retract-btn:hover { background: #03ffbc; }
+.task-btn:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
 
-.retractable {
+/* Drawers for inputs */
+.drawer {
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  transition: max-height 0.4s ease, opacity 0.4s ease;
-  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.25); /* frosted glass */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 10px 15px;
+  margin-top: 5px;
+  transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
-.retractable.show { 
-  max-height: 200px;
-  opacity: 1; 
-  }
+.drawer.open {
+  max-height: 200px; /* adjust for content */
+  opacity: 1;
+  padding: 10px 15px;
+}
 
-.main-content { display: flex; flex: 1; padding: 20px; overflow-y: auto; gap: 20px; }
+/* Push content down */
+.main-content {
+  margin-top: 100px; /* adjust according to taskbar height */
+  display: flex;
+  padding: 20px;
+  overflow-y: auto;
+  gap: 20px;
+}
 
-.table-container { flex: 2; overflow-x: auto; }
+.table-container { flex: 2; overflow-x: auto; background-color: whitesmoke; padding: 20px; border: 2px solid; box-shadow: 0 2px 12px;}
 .table-container table { width: 100%; border-collapse: collapse; }
-.table-container th, .table-container td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+.table-container th, .table-container td { border: 1px solid #000000; padding: 8px; text-align: left; }
 
-.chart-container { flex: 1; }
+.chart-container { flex: 1; background-color: white; }
