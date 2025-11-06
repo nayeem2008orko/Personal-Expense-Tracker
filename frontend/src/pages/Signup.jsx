@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_URL } from "./config";
 
 export default function Signup() {
   const [fullName, setFullName] = useState("");
@@ -28,7 +29,7 @@ export default function Signup() {
     setMessage(""); // clear previous message
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/signup", {
+      const res = await fetch(`${API_URL}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fullName, dob, username, password }),

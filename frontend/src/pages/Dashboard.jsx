@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { API_URL } from './config';
 export default function Dashboard() {
   const [trackers, setTrackers] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
@@ -12,7 +12,7 @@ export default function Dashboard() {
 
   const fetchTrackers = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/tracker/list", {
+      const res = await fetch(`${API_URL}/api/tracker/list`, {
         credentials: "include",
       });
       if (res.ok) {
@@ -31,7 +31,7 @@ export default function Dashboard() {
   const handleCreate = async () => {
     if (!newName) return setMessage("Please enter a name");
     try {
-      const res = await fetch("http://localhost:5000/api/tracker/create", {
+      const res = await fetch(`${API_URL}/api/tracker/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -51,7 +51,7 @@ export default function Dashboard() {
   const handleDelete = async (trackerId) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/tracker/delete/${trackerId}`,
+        `${API_URL}/api/tracker/delete/${trackerId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -74,7 +74,7 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     try {
-      await fetch(`http://localhost:5000/api/auth/logout`, {
+      await fetch(`${API_URL}/api/auth/logout`, {
         method: "POST",
         credentials: "include",
       });

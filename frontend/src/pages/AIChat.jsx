@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import "../styles/AIchat.css";
+import {API_URL} from './config'
 
 export default function AIChat() {
   const [open, setOpen] = useState(false);
@@ -24,7 +25,7 @@ export default function AIChat() {
     setLoading(true); // start loading
 
     try {
-      const res = await fetch("http://localhost:5000/api/ai/chat", {
+      const res = await fetch(`${API_URL}/api/ai/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: userMessage.text }),

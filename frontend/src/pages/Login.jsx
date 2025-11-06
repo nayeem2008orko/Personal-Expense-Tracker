@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { API_URL } from './config';
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -27,7 +27,7 @@ export default function Login() {
     setMessage(""); // clear previous message
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
