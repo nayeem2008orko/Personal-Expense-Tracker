@@ -43,6 +43,8 @@ DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 DB_NAME=your_db_name
 OPENROUTER_API_KEY=your_openrouter_api_key
+jwt_token=your_jwt_token
+ID_SECRET_KEY=your_secret_key  #Encryption Key
 ```
 4. Start the project:
 ```bash
