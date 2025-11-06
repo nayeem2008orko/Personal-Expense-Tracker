@@ -13,7 +13,7 @@ router.post("/chat", async (req, res) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "alibaba/tongyi-deepresearch-30b-a3b:free",
+        model: "minimax/minimax-m2:free",
         messages: [{ role: "user", content: message }],
       }),
     });
